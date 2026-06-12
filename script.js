@@ -1,4 +1,5 @@
-const bts = document.querySelectorAll('.parametro-senha__botao');
+const btnMenos = document.querySelector('#btn-menos');
+const btnMais = document.querySelector('#btn-mais');
 const txtTamanho = document.querySelector('.parametro-senha__texto');
 const campoSenha = document.querySelector('#campo-senha');
 const checkboxes = document.querySelectorAll('.checkbox');
@@ -7,88 +8,96 @@ const textoForca = document.querySelector('#texto-forca');
 
 let tamanhoSenha = 12;
 
-const geradores = {
-    maiuscula: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
-    minuscula: 'abcdefghijklmnopqrstuvwxyz',
-    numero: '0123456789',
-    simbolo: '!@#$%^&*()_+~`|}{[]\:;?><,./-='
+const bancoCaracteres = {
+    'chk-maiuscula': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    'chk-minuscula': 'abcdefghijklmnopqrstuvwxyz',
+    'chk-numero': '0123456789',
+    'chk-simbolo': '!@#$%^&*()_+~`|}{[]\:;?><,./-='
 };
 
 function gerarSenha() {
-    let caracteresPossiveis = '';
-    checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-            caracteresPossiveis += geradores[checkbox.name];
+    let pool = '';
+    
+    checkboxes.forEach(chk => {
+        if (chk.checked) {
+            pool += bancoCaracteres[chk.id];
         }
     });
 
-    if (caracteresPossiveis === '') {
+    if (!pool) {
         campoSenha.value = '';
-        atualizarForca(0);
+        atualizarInterfaceForca(0);
         return;
     }
 
-    let senha = '';
+    let resultado = '';
     for (let i = 0; i < tamanhoSenha; i++) {
-        const aleatorio = Math.floor(Math.random() * caracteresPossiveis.length);
-        senha += caracteresPossiveis[aleatorio];
+        const index = Math.floor(Math.random() * pool.length);
+        resultado += pool[index];
     }
-    campoSenha.value = senha;
-    calcularForca();
+
+    campoSenha.value = resultado;
+    avaliarForca();
 }
 
-function calcularForca() {
-    let pontos = 0;
-    const temMaiuscula = /[A-Z]/.test(campoSenha.value);
-    const temMinuscula = /[a-z]/.test(campoSenha.value);
-    const temNumero = /[0-9]/.test(campoSenha.value);
-    const temSimbolo = /[^A-Za-z0-9]/.test(campoSenha.value);
+function avaliarForca() {
+    let score = 0;
+    const senha = campoSenha.value;
 
-    if (temMaiuscula) pontos++;
-    if (temMinuscula) pontos++;
-    if (temNumero) pontos++;
-    if (temSimbolo) pontos++;
+    if (!senha) return;
 
-    if (tamanhoSenha > 12) pontos++;
-    if (tamanhoSenha > 16) pontos++;
+    if (/[A-Z]/.test(senha)) score++;
+    if (/[a-z]/.test(senha)) score++;
+    if (/[0-9]/.test(senha)) score++;
+    if (/[^A-Za-z0-9]/.test(senha)) score++;
 
-    atualizarForca(pontos);
+    if (tamanhoSenha >= 8) score++;
+    if (tamanhoSenha >= 14) score++;
+
+    atualizarInterfaceForca(score);
 }
 
-function atualizarForca(pontos) {
-    if (pontos <= 2) {
-        indicadorForca.style.width = '33%';
-        indicadorForca.style.backgroundColor = '#ff4d4d';
+function atualizarInterfaceForca(score) {
+    if (score === 0) {
+        indicadorForca.style.width = '0%';
+        textoForca.textContent = 'Vazio';
+        textoForca.style.color = '#555';
+    } else if (score <= 2) {
+        indicadorForca.style.width = '30%';
+        indicadorForca.style.backgroundColor = '#FF3333';
         textoForca.textContent = 'Fraca';
-    } else if (pontos <= 4) {
-        indicadorForca.style.width = '66%';
-        indicadorForca.style.backgroundColor = '#ffd11a';
+        textoForca.style.color = '#FF3333';
+    } else if (score <= 4) {
+        indicadorForca.style.width = '65%';
+        indicadorForca.style.backgroundColor = '#FFCC00';
         textoForca.textContent = 'Média';
+        textoForca.style.color = '#FFCC00';
     } else {
         indicadorForca.style.width = '100%';
-        indicadorForca.style.backgroundColor = '#00ff00';
+        indicadorForca.style.backgroundColor = '#00FF66';
         textoForca.textContent = 'Forte';
+        textoForca.style.color = '#00FF66';
     }
 }
 
-bts[0].addEventListener('click', () => {
-    if (tamanhoSenha > 1) {
+btnMenos.addEventListener('click', () => {
+    if (tamanhoSenha > 4) {
         tamanhoSenha--;
         txtTamanho.textContent = tamanhoSenha;
         gerarSenha();
     }
 });
 
-bts[1].addEventListener('click', () => {
-    if (tamanhoSenha < 20) {
+btnMais.addEventListener('click', () => {
+    if (tamanhoSenha < 32) {
         tamanhoSenha++;
         txtTamanho.textContent = tamanhoSenha;
         gerarSenha();
     }
 });
 
-checkboxes.forEach(checkbox => {
-    checkbox.addEventListener('click', gerarSenha);
+checkboxes.forEach(chk => {
+    chk.addEventListener('change', gerarSenha);
 });
 
 gerarSenha();
