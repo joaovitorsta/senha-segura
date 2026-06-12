@@ -11,13 +11,12 @@
 <body>
     <section class="conteudo">
         <div class="conteudo-titulo">
-            <img src="unlock.svg" alt="cadeado fechado">
             <h2 class="titulo-principal">Gerador de senhas</h2>
             <h3 class="titulo-secundario">Gere instantaneamente uma senha aleatória e segura</h3>
         </div>
         <div class="conteudo-senha">
             <label for="senha">Senha</label>
-            <input name="senha" type="text" id="campo-senha">
+            <input name="senha" type="text" id="campo-senha" readonly>
         </div>
         <div class="parametro">
             <h3 class="parametro-titulo">Personalize sua senha</h3>
@@ -32,9 +31,29 @@
                 </div>               
                 <div class="parametro-senha">
                     <h4 class="parametro-senha__titulo">Características da senha</h4>
+                    <div class="checkbox-grupo">
+                        <input type="checkbox" name="maiuscula" class="checkbox" checked>
+                        <label>Letras maiúsculas</label>
+                    </div>
+                    <div class="checkbox-grupo">
+                        <input type="checkbox" name="minuscula" class="checkbox">
+                        <label>Letras minúsculas</label>
+                    </div>
+                    <div class="checkbox-grupo">
+                        <input type="checkbox" name="numero" class="checkbox">
+                        <label>Números</label>
+                    </div>
+                    <div class="checkbox-grupo">
+                        <input type="checkbox" name="simbolo" class="checkbox">
+                        <label>Símbolos</label>
+                    </div>
                 </div>
                 <div class="parametro-senha">
                     <h4 class="parametro-senha__titulo">Força da senha</h4>
+                    <div class="forca-barra">
+                        <div id="indicador-forca"></div>
+                    </div>
+                    <p id="texto-forca"></p>
                 </div>
             </div>
         </div>
